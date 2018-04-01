@@ -6,9 +6,7 @@ output:
     keep_md: TRUE
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(collapse = TRUE, comment = "#>", cache = TRUE)
-```
+
 
 [Source](https://gist.github.com/wch/0e564def155d976c04dd28a876dc04b4) for this document.
 
@@ -16,7 +14,8 @@ knitr::opts_chunk$set(collapse = TRUE, comment = "#>", cache = TRUE)
 
 A number of people gave suggestions on Twitter, which I've collected here. I've benchmarked these methods with data of various sizes; scroll down to see a plot of times.
 
-```{r define-approaches, message=FALSE}
+
+```r
 library(purrr)
 library(dplyr)
 library(tidyr)
@@ -82,7 +81,8 @@ f_rowwise <- function(df) {
 
 Benchmark each of them, using data sets with varying numbers of rows:
 
-```{r run-benchmark}
+
+```r
 run_benchmark <- function(nrow) {
   # Make some data
   df <- data.frame(
@@ -123,11 +123,22 @@ knitr::kable(times)
 ```
 
 
+
+  nrow   apply   split_lapply   lapply_row   lapply_lapply    pmap   pmap_aslist   rowwise
+------  ------  -------------  -----------  --------------  ------  ------------  --------
+ 1e+01   0.000          0.001        0.000           0.001   0.001         0.000     0.041
+ 1e+02   0.002          0.005        0.005           0.006   0.002         0.002     0.059
+ 1e+03   0.004          0.037        0.040           0.015   0.002         0.002     0.052
+ 1e+04   0.039          0.430        0.345           0.156   0.015         0.017     0.506
+ 1e+05   0.553         22.546       21.933           1.786   0.202         0.225     5.218
+
+
 ## Plot times
 
 This plot shows the number of seconds needed to process n rows, for each method. Both the x and y use log scales, so each step along the x scale represents a 10x increase in number of rows, and each step along the y scale represents a 10x increase in time.
 
-```{r plot, message=FALSE, cache = FALSE}
+
+```r
 library(ggplot2)
 library(scales)
 library(forcats)
@@ -156,4 +167,9 @@ ggplot(times_long, aes(x = nrow, y = seconds, colour = method)) +
     breaks = trans_breaks("log10", function(x) 10^x),
     labels = trans_format("log10", math_format(10^.x)),
     minor_breaks = NULL)
+#> Warning: Transformation introduced infinite values in continuous y-axis
+
+#> Warning: Transformation introduced infinite values in continuous y-axis
 ```
+
+![](wch_files/figure-html/plot-1.png)<!-- -->
