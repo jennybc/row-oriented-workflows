@@ -77,6 +77,12 @@ f_pmap_aslist <- function(df) {
 f_rowwise <- function(df) {
   df %>% rowwise %>% do(row = as.list(.))
 }
+
+# @JennyBryan
+# purrr::transpose (only works for this specific task, i.e. one sub-list per row)
+f_transpose <- function(df) {
+  transpose
+}
 ```
 
 
@@ -99,7 +105,8 @@ run_benchmark <- function(nrow) {
     #by_row        = system.time(f_by_row(df)),
     pmap          = system.time(f_pmap(df)),
     pmap_aslist   = system.time(f_pmap_aslist(df)),
-    rowwise       = system.time(f_rowwise(df))
+    rowwise       = system.time(f_rowwise(df)),
+    transpose     = system.time(f_transpose(df))
   )
   
   # Get elapsed times

@@ -76,6 +76,12 @@ f_pmap_aslist <- function(df) {
 f_rowwise <- function(df) {
   df %>% rowwise %>% do(row = as.list(.))
 }
+
+# @JennyBryan
+# purrr::transpose (only works for this specific task, i.e. one sub-list per row)
+f_transpose <- function(df) {
+  transpose
+}
 ```
 
 
@@ -99,7 +105,8 @@ run_benchmark <- function(nrow) {
     #by_row        = system.time(f_by_row(df)),
     pmap          = system.time(f_pmap(df)),
     pmap_aslist   = system.time(f_pmap_aslist(df)),
-    rowwise       = system.time(f_rowwise(df))
+    rowwise       = system.time(f_rowwise(df)),
+    transpose     = system.time(f_transpose(df))
   )
   
   # Get elapsed times
@@ -124,13 +131,13 @@ knitr::kable(times)
 
 
 
-  nrow   apply   split_lapply   lapply_row   lapply_lapply    pmap   pmap_aslist   rowwise
-------  ------  -------------  -----------  --------------  ------  ------------  --------
- 1e+01   0.000          0.001        0.000           0.001   0.001         0.000     0.041
- 1e+02   0.002          0.005        0.005           0.006   0.002         0.002     0.059
- 1e+03   0.004          0.037        0.040           0.015   0.002         0.002     0.052
- 1e+04   0.039          0.430        0.345           0.156   0.015         0.017     0.506
- 1e+05   0.553         22.546       21.933           1.786   0.202         0.225     5.218
+  nrow   apply   split_lapply   lapply_row   lapply_lapply    pmap   pmap_aslist   rowwise   transpose
+------  ------  -------------  -----------  --------------  ------  ------------  --------  ----------
+ 1e+01   0.001          0.000        0.000           0.000   0.002         0.000     0.042       0.000
+ 1e+02   0.002          0.005        0.004           0.005   0.002         0.002     0.069       0.001
+ 1e+03   0.003          0.036        0.039           0.015   0.002         0.002     0.055       0.000
+ 1e+04   0.040          0.451        0.366           0.162   0.020         0.015     0.518       0.000
+ 1e+05   0.534         23.915       22.106           1.847   0.217         0.201     5.398       0.000
 
 
 ## Plot times
