@@ -84,7 +84,7 @@ f_rowwise <- function(df) {
 # @JennyBryan
 # purrr::transpose (only works for this specific task, i.e. one sub-list per row)
 f_transpose <- function(df) {
-  transpose
+  transpose(df)
 }
 ```
 
