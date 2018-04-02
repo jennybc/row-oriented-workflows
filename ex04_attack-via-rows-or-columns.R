@@ -1,5 +1,5 @@
 #' ---
-#' title: "Thinking Inside the Box"
+#' title: "Attack via rows or columns?"
 #' author: "Jenny Bryan"
 #' date: "`r format(Sys.Date())`"
 #' output: github_document
@@ -13,20 +13,17 @@ knitr::opts_chunk$set(
 )
 options(tidyverse.quiet = TRUE)
 
+#' **WARNING: half-baked**
+
 #+ body
 # ----
 library(tidyverse)
-
 
 # ----
 #' ## If you must sweat, compare row-wise work vs. column-wise work
 #'
 #' The approach you use in that first example is not always the one that scales
 #' up the best.
-
-sapply(df, class)
-class(df[1, ])
-class(iris[14, ])
 
 x <- list(
   list(name = "sue", number = 1, veg = c("onion", "carrot")),
@@ -51,22 +48,3 @@ tibble(
   number = map_dbl(x, "number"),
   veg = map(x, "veg")
 )
-
-# add_row()
-# rbind(df, as.data.frame(t(v2)))
-# https://stackoverflow.com/questions/22581122/how-to-add-a-named-vector-as-a-row-to-a-data-frame
-
-## iterating over rows
-## specific problem from dean: transforming a dataframe into a list of rows
-## (the format that Javascript d3 expects)
-# split(x, seq_len(nrow(x))) then lapply (or purrr::map)
-# lapply(seq_len(nrow(df)), function(i) as.list(df[i,,drop=F]))
-# for (i in seq_len(nrow(df)) {...}
-# for(i in seq_along(df[,1]){df[i,]}
-# lapply(seq(nrow(df)), function(i) { row <- df[i,] }
-# ## jim hester
-# lapply(seq_len(NROW(df)), function(i) val = df[i, , drop = FALSE])
-
-pmap(head(iris), list)
-
-View(mtcars)
