@@ -16,11 +16,14 @@ knitr::opts_chunk$set(collapse = TRUE, comment = "#>", cache = TRUE)
 
 A number of people gave suggestions on Twitter, which I've collected here. I've benchmarked these methods with data of various sizes; scroll down to see a plot of times.
 
-```{r define-approaches, message=FALSE}
+```{r load-packages, cache = FALSE}
 library(purrr)
 library(dplyr)
 library(tidyr)
+```
 
+
+```{r define-approaches, message=FALSE}
 # @dattali
 # Using apply (only safe when all cols are same type)
 f_apply <- function(df) {

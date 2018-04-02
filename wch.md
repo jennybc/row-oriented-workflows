@@ -18,8 +18,20 @@ A number of people gave suggestions on Twitter, which I've collected here. I've 
 ```r
 library(purrr)
 library(dplyr)
+#> 
+#> Attaching package: 'dplyr'
+#> The following objects are masked from 'package:stats':
+#> 
+#>     filter, lag
+#> The following objects are masked from 'package:base':
+#> 
+#>     intersect, setdiff, setequal, union
 library(tidyr)
+```
 
+
+
+```r
 # @dattali
 # Using apply (only safe when all cols are same type)
 f_apply <- function(df) {
@@ -133,11 +145,11 @@ knitr::kable(times)
 
   nrow   apply   split_lapply   lapply_row   lapply_lapply    pmap   pmap_aslist   rowwise   transpose
 ------  ------  -------------  -----------  --------------  ------  ------------  --------  ----------
- 1e+01   0.001          0.000        0.000           0.000   0.002         0.000     0.042       0.000
- 1e+02   0.002          0.005        0.004           0.005   0.002         0.002     0.069       0.001
- 1e+03   0.003          0.036        0.039           0.015   0.002         0.002     0.055       0.000
- 1e+04   0.040          0.451        0.366           0.162   0.020         0.015     0.518       0.000
- 1e+05   0.534         23.915       22.106           1.847   0.217         0.201     5.398       0.000
+ 1e+01   0.000          0.001        0.000           0.001   0.002         0.000     0.042           0
+ 1e+02   0.001          0.005        0.006           0.005   0.001         0.001     0.056           0
+ 1e+03   0.004          0.046        0.037           0.013   0.002         0.002     0.051           0
+ 1e+04   0.039          0.439        0.366           0.163   0.018         0.017     0.532           0
+ 1e+05   0.546         22.844       21.957           1.833   0.196         0.227     5.301           0
 
 
 ## Plot times
