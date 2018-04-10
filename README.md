@@ -1,4 +1,4 @@
-# inside-the-box
+# Row-oriented workflows in R with the tidyverse
 
 Materials for [RStudio webinar](https://www.rstudio.com/resources/webinars/):
 
