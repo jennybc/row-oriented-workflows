@@ -40,7 +40,11 @@ benchmark <- function(n = 1, expr, envir = parent.frame()) {
 }
 
 run_row_benchmark <- function(nrow, times = 5) {
-  df <- data.frame(x = rnorm(nrow), y = runif(nrow), z = runif(nrow))
+  df <- data.frame(
+    x = rep_len(letters, length.out = nrow),
+    y = runif(nrow),
+    z = seq_len(nrow)
+  )
   res <- list(
     transpose     = benchmark(times, f_transpose(df)),
     pmap          = benchmark(times, f_pmap(df)),
@@ -115,14 +119,14 @@ plot_it <- function(df, what = "nrow") {
 }
 
 ## dry runs
-df_test <- run_row_benchmark(nrow = 1000) %>% flevels()
+df_test <- run_row_benchmark(nrow = 10000) %>% flevels()
 df_test <- run_col_benchmark(ncol = 10000) %>% flevels()
 ggplot(df_test, aes(x = method, y = time)) +
   geom_jitter(width = 0.25, height = 0) +
   scale_y_log10()
 
 ## The Real Thing
-## fairly fast up to 10^4, go get a coffee at 10^5
+## fairly fast up to 10^4, go get a coffee at 10^5 (row case only)
 df_r <- map_df(10 ^ (1:5), run_row_benchmark) %>% flevels()
 write_csv(df_r, "row-benchmark.csv")
 
