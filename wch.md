@@ -10,6 +10,8 @@ output:
 
 [Source](https://gist.github.com/wch/0e564def155d976c04dd28a876dc04b4) for this document.
 
+[RPub](https://rpubs.com/wch/200398) for this document.
+
 @dattali [asked](https://twitter.com/daattali/status/761058049859518464), "what's a safe way to iterate over rows of a data frame?" The example was to convert each row into a list and return a list of lists, indexed first by column, then by row.
 
 A number of people gave suggestions on Twitter, which I've collected here. I've benchmarked these methods with data of various sizes; scroll down to see a plot of times.
