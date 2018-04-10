@@ -32,16 +32,21 @@ f_transpose <- function(df) {
   transpose(df)
 }
 
+## explicit gc, then execute `expr` `n` times w/o explicit gc, return timings
+benchmark <- function(n = 1, expr, envir = parent.frame()) {
+  expr <- substitute(expr)
+  gc()
+  map(seq_len(n), ~ system.time(eval(expr, envir), gcFirst = FALSE))
+}
+
 run_row_benchmark <- function(nrow, times = 5) {
   df <- data.frame(x = rnorm(nrow), y = runif(nrow), z = runif(nrow))
-  rerun_gc_once <- function(...) {gc(); rerun(...)}
-  st_no_gc <- function(expr) system.time(expr, gcFirst = FALSE)
   res <- list(
-    transpose     = rerun_gc_once(times, st_no_gc(f_transpose(df))),
-    pmap          = rerun_gc_once(times, st_no_gc(f_pmap(df))),
-    split_lapply  = rerun_gc_once(times, st_no_gc(f_split_lapply(df))),
-    lapply_row    = rerun_gc_once(times, st_no_gc(f_lapply_row(df))),
-    for_loop      = rerun_gc_once(times, st_no_gc(f_for_loop(df)))
+    transpose     = benchmark(times, f_transpose(df)),
+    pmap          = benchmark(times, f_pmap(df)),
+    split_lapply  = benchmark(times, f_split_lapply(df)),
+    lapply_row    = benchmark(times, f_lapply_row(df)),
+    for_loop      = benchmark(times, f_for_loop(df))
   )
   res <- map(res, ~ map_dbl(.x, "elapsed"))
   tibble(
@@ -59,14 +64,12 @@ run_col_benchmark <- function(ncol, times = 5) {
     z = seq_len(nrow)
   )
   df <- template[rep_len(seq_len(ncol(template)), length.out = ncol)]
-  rerun_gc_once <- function(...) {gc(); rerun(...)}
-  st_no_gc <- function(expr) system.time(expr, gcFirst = FALSE)
   res <- list(
-    transpose     = rerun_gc_once(times, st_no_gc(f_transpose(df))),
-    pmap          = rerun_gc_once(times, st_no_gc(f_pmap(df))),
-    split_lapply  = rerun_gc_once(times, st_no_gc(f_split_lapply(df))),
-    lapply_row    = rerun_gc_once(times, st_no_gc(f_lapply_row(df))),
-    for_loop      = rerun_gc_once(times, st_no_gc(f_for_loop(df)))
+    transpose     = benchmark(times, st_no_gc(f_transpose(df))),
+    pmap          = benchmark(times, st_no_gc(f_pmap(df))),
+    split_lapply  = benchmark(times, st_no_gc(f_split_lapply(df))),
+    lapply_row    = benchmark(times, st_no_gc(f_lapply_row(df))),
+    for_loop      = benchmark(times, st_no_gc(f_for_loop(df)))
   )
   res <- map(res, ~ map_dbl(.x, "elapsed"))
   tibble(
