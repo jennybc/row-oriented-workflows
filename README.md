@@ -4,7 +4,8 @@ Materials for [RStudio webinar](https://www.rstudio.com/resources/webinars/):
 
 Thinking inside the box: you can do that inside a data frame?!  
 Jenny Bryan  
-Wednesday, April 11 at 1:00pm ET / 10:00am PT
+Wednesday, April 11 at 1:00pm ET / 10:00am PT  
+[rstd.io/row-work](https://rstd.io/row-work) *shortlink to this repo*
 
 ## Abstract
 
@@ -22,7 +23,5 @@ Not all are used in webinar
   * **Row-wise thinking vs. column-wise thinking.** [`ex05_attack-via-rows-or-columns`](ex05_attack-via-rows-or-columns.md) Data rectangling example. Both are possible, but I find building a tibble column-by-column is less aggravating than building rows, then row binding.
   * **Iterate over rows of a data frame.** [`iterate-over-rows`](iterate-over-rows.md) Empirical study of reshaping a data frame into this form: a list with one component per row. Revisiting a study originally done by Winston Chang. Run times for different number of [rows](row-benchmark.png) or [columns](col-benchmark.png).
   * **Generate data from different distributions via `purrr::pmap()`.** [`ex06_runif-via-pmap`](ex06_runif-via-pmap.md) Use `purrr::pmap()` to generate U[min, max] data for various combinations of (n, min, max), stored as rows of a data frame.
-  * **Group and summarise.** [`ex07_group-by-summarise`](ex07_group-by-summarise.md) Use `dplyr::group_by()` and `dplyr::summarise()` to compute group-wise summaries, without explicitly splitting up the data frame and re-combining the results. Use `list()` to package multivariate summaries into something `summarise()` can handle, creating a list-column.
-  * **Split-apply-combine.** Nesting vs splitting.
-    - Downside of `split()`: First-class grouping variable(s) --> character vector of names --> variable is a big drag. Integer-y numerics must be coerced back, factors must be recreated, with original levels. Transitting data through attributes is an anti-pattern.
-    - Downside of `nest()`: When you inspect the list-column, you can't see values of grouping (key) variables. Grouping variables not necessarily/easily available for simple map (coolbutuseless's posts and PR).
+  * **Are you SURE you need to iterate over groups?** [`ex07_group-by-summarise`](ex07_group-by-summarise.md) Use `dplyr::group_by()` and `dplyr::summarise()` to compute group-wise summaries, without explicitly splitting up the data frame and re-combining the results. Use `list()` to package multivariate summaries into something `summarise()` can handle, creating a list-column.
+  * **Group-and-nest.** [`ex08_nesting-is-good`](ex08_nesting-is-good.md) How to explicitly work on groups of rows via nesting (our recommendation) vs splitting.

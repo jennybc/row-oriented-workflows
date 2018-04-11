@@ -24,162 +24,107 @@ gap <- gapminder %>%
   filter(continent == "Asia") %>%
   mutate(yr1952 = year - 1952)
 
+#+ alpha-order
 ggplot(gap, aes(x = lifeExp, y = country)) +
   geom_point()
-#' Random arrangement of countries
-#'
-#' Set factor levels with intent. Imagine you want this to persist across an
-#' entire analysis.
-gap <- gap %>%
-  mutate(country = fct_reorder2(country, x = -1 * year, y = lifeExp))
 
+#' Countries are in alphabetical order.
+#'
+#' Set factor levels with intent. Example: order based on life expectancy in
+#' 2007, the last year in this dataset. Imagine you want this to persist across
+#' an entire analysis.
+gap <- gap %>%
+  mutate(country = fct_reorder2(country, x = year, y = lifeExp))
+
+#+ principled-order
 ggplot(gap, aes(x = lifeExp, y = country)) +
   geom_point()
+
 
 #' Much better!
 #'
-#' Now imagine we want to fit a model to each country and lot at dot plots of
+#' Now imagine we want to fit a model to each country and look at dot plots of
 #' slope and intercept.
 #'
-#' Nested approach ... leaves `country` as factor.
+#' `dplyr::group_by()` + `tidyr::nest()` created a *nested data frame* and is an
+#' alternative to splitting into country-specific data frames. Those data frames
+#' end up, instead, in a list-column. The `country` variable remains as a normal
+#' factor.
 gap_nested <- gap %>%
   group_by(country) %>%
   nest()
 
+gap_nested
+gap_nested$data[[1]]
+
 gap_fitted <- gap_nested %>%
   mutate(fit = map(data, ~ lm(lifeExp ~ yr1952, data = .x)))
+gap_fitted
+gap_fitted$fit[[1]]
 
 gap_fitted <- gap_fitted %>%
   mutate(
     intercept = map_dbl(fit, ~ coef(.x)[["(Intercept)"]]),
     slope = map_dbl(fit, ~ coef(.x)[["yr1952"]])
   )
+gap_fitted
 
+#+ principled-order-coef-ests
 ggplot(gap_fitted, aes(x = intercept, y = country)) +
   geom_point()
 
 ggplot(gap_fitted, aes(x = slope, y = country)) +
   geom_point()
 
-#' The `split()` + `lapply()` + `do.call(rbind, ...)` approach
-#' Much fussing
+#' The `split()` + `lapply()` + `do.call(rbind, ...)` approach.
+#'
+#' Split gap into many data frames, one per country.
 gap_split <- split(gap, gap$country)
+
+#' Fit a model to each country.
 gap_split_fits <- lapply(
   gap_split,
   function(df) {
     lm(lifeExp ~ yr1952, data = df)
   }
 )
-## oops ... the unused levels of country are a problem
-
+#' Oops ... the unused levels of country are a problem (empty data frames in our
+#' list).
+#'
+#' Drop unused levels in country and split.
 gap_split <- split(droplevels(gap), droplevels(gap)$country)
+head(gap_split, 2)
+
+#' Fit model to each country and get `coefs()`.
 gap_split_coefs <- lapply(
   gap_split,
   function(df) {
     coef(lm(lifeExp ~ yr1952, data = df))
   }
 )
+head(gap_split_coefs, 2)
+
+#' Now we need to put everything back togethers. Row bind the list of coefs.
+#' Coerce from matrix back to data frame.
 gap_split_coefs <- as.data.frame(do.call(rbind, gap_split_coefs))
+
+#' Restore `country` variable from row names.
 gap_split_coefs$country <- rownames(gap_split_coefs)
 str(gap_split_coefs)
 
+#+ revert-to-alphabetical
 ggplot(gap_split_coefs, aes(x = `(Intercept)`, y = country)) +
   geom_point()
-
-ggplot(gap_split_coefs, aes(x = yr1952, y = country)) +
-  geom_point()
-#' We are back to the random order of countries.
-
-
-
-
-
-
-
-
-
-
-
-
-gap <- gapminder %>%
-  filter(year %in% c(1952, 2007), continent != "Oceania") %>%
-  droplevels() %>%
-  select(continent, year, lifeExp) %>%
-  mutate(continent = fct_reorder2(continent, x = year, y = lifeExp)) %>%
-  arrange(continent, year)
-View(gap)
-
-levels(gap$continent)
-
-ggplot(gap, aes(x = year, y = lifeExp, color = continent)) +
-  geom_jitter(width = 10) + geom_smooth(method = "lm", se = FALSE)
-
-gap_nested <- gap %>%
-  group_by(continent) %>%
-  nest()
-gap_nested
-
-gap_nested$data[[1]]
-t.test(lifeExp ~ year, data = gap_nested$data[[1]])
-
-gap_tested <- gap_nested %>%
-  mutate(tt = map(data, ~ t.test(lifeExp ~ year, data = .x)))
-
-gap_tested$tt[[1]]
-gap_tested$tt[[1]][["statistic"]]
-
-gap_tested <- gap_nested %>%
-  mutate(tt = map(data, ~ t.test(lifeExp ~ year, data = .x)),
-         tt = map_dbl(tt, "statistic"))
-gap_tested
-
-gap_split <- split(gap, gap$continent)
-gap_split_tested <- lapply(
-  gap_split,
-  function(df) t.test(lifeExp ~ year, data = df)
-)
-gap_split_tested <- lapply(gap_split_tested, `[[`, "statistic")
-
-
-
-
-gap <- gapminder %>%
-  mutate(country = fct_reorder2(country, x = year, y = lifeExp)) %>%
-  arrange(country, year)
-View(filter(gap, year == 2007))
-
-
-gap <- gapminder %>%
-  filter(country %in% c("Japan", "China", "Pakistan", "Afghanistan")) %>%
-  droplevels()
-
-ggplot(gap, aes(x = year, y = lifeExp, color = country)) +
-  geom_point() +
-  geom_smooth(method = "lm", se = FALSE)
-
-
-gap <- gapminder %>%
-  filter(country %in% c("Japan", "China", "Pakistan", "Afghanistan")) %>%
-  droplevels() %>%
-  mutate(
-    country = fct_reorder2(country, x = year, y = lifeExp),
-    yr1952 = year - 1952
-  )
-
-ggplot(gap, aes(x = year, y = lifeExp, color = country)) +
-  geom_point() +
-  geom_smooth(method = "lm", se = FALSE)
-
-levels(gap$country)
-
-#' Much better! Now we do more analyses, that require split-apply-combine.
-
-gap_nested <- gap %>%
-  group_by(country) %>%
-  nest()
-
-gap_fitted <- gap_nested %>%
-  mutate(fit = map(data, ~ lm(lifeExp ~ yr1952, data = .x)))
-
-gap_fitted$fit[[1]]
-
+#' Uh-oh, we lost the order of the `country` factor, due to coercion from factor
+#' to character (list and then row names).
+#'
+#' The `nest()` approach allows you to keep data as data vs. in attributes, such
+#' as list or row names. Preserves factors and their levels or integer
+#' variables. Designs away various opportunities for different pieces of the
+#' dataset to get "out of sync" with each other, by leaving them in a data frame
+#' at all times.
+#'
+#' First in an interesting series of blog posts exploring these patterns and
+#' asking whether the tidyverse still needs a way to include the nesting
+#' variable in the nested data:
+#' <https://coolbutuseless.bitbucket.io/2018/03/03/split-apply-combine-my-search-for-a-replacement-for-group_by---do/>
