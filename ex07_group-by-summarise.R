@@ -29,7 +29,7 @@ library(tidyverse)
 
 iris %>%
   group_by(Species) %>%
-  summarise(pl_avg = mean(Petal.Length), pw = mean(Petal.Width))
+  summarise(pl_avg = mean(Petal.Length), pw_avg = mean(Petal.Width))
 
 #' What if you want to return summaries that are not just a single number?
 #'

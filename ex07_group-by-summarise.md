@@ -17,13 +17,13 @@ library(tidyverse)
 
 iris %>%
   group_by(Species) %>%
-  summarise(pl_avg = mean(Petal.Length), pw = mean(Petal.Width))
+  summarise(pl_avg = mean(Petal.Length), pw_avg = mean(Petal.Width))
 #> # A tibble: 3 x 3
-#>   Species    pl_avg    pw
-#>   <fct>       <dbl> <dbl>
-#> 1 setosa       1.46 0.246
-#> 2 versicolor   4.26 1.33 
-#> 3 virginica    5.55 2.03
+#>   Species    pl_avg pw_avg
+#>   <fct>       <dbl>  <dbl>
+#> 1 setosa       1.46  0.246
+#> 2 versicolor   4.26  1.33 
+#> 3 virginica    5.55  2.03
 ```
 
 What if you want to return summaries that are not just a single number?
