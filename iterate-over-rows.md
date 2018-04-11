@@ -1,20 +1,36 @@
-#' ---
-#' title: "Turn data frame into a list, one component per row"
-#' author: "Jenny Bryan, updating work of Winston Chang"
-#' date: "`r format(Sys.Date())`"
-#' output: github_document
-#' ---
-#'
-#' Update of <https://rpubs.com/wch/200398>.
-#'
-#'   * Added some methods, removed some methods.
-#'   * Run every combination of problem size & method multiple times.
-#'   * Explore different number of rows and columns, with mixed col types.
+Turn data frame into a list, one component per row
+================
+Jenny Bryan, updating work of Winston Chang
+2018-04-10
 
+Update of <https://rpubs.com/wch/200398>.
+
+  - Added some methods, removed some methods.
+  - Run every combination of problem size & method multiple times.
+  - Explore different number of rows and columns, with mixed col types.
+
+<!-- end list -->
+
+``` r
 library(scales)
 library(forcats)
 library(tidyverse)
+```
 
+    ## ── Attaching packages ───────────────────────────────────────── tidyverse 1.2.1 ──
+
+    ## ✔ ggplot2 2.2.1          ✔ readr   1.1.1.9000
+    ## ✔ tibble  1.4.2          ✔ purrr   0.2.4.9000
+    ## ✔ tidyr   0.8.0          ✔ dplyr   0.7.4.9000
+    ## ✔ ggplot2 2.2.1          ✔ stringr 1.3.0
+
+    ## ── Conflicts ──────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ✖ readr::col_factor() masks scales::col_factor()
+    ## ✖ purrr::discard()    masks scales::discard()
+    ## ✖ dplyr::filter()     masks stats::filter()
+    ## ✖ dplyr::lag()        masks stats::lag()
+
+``` r
 # for loop over row index
 f_for_loop <- function(df) {
   out <- vector(mode = "list", length = nrow(df))
@@ -143,17 +159,43 @@ plot_it <- function(df, what = "nrow") {
 #df_r <- map_df(10 ^ (1:5), run_row_benchmark) %>% flevels()
 #write_csv(df_r, "row-benchmark.csv")
 df_r <- read_csv("row-benchmark.csv") %>% flevels()
+```
 
-#+ row-benchmark
+    ## Parsed with column specification:
+    ## cols(
+    ##   nrow = col_double(),
+    ##   method = col_character(),
+    ##   time = col_double()
+    ## )
+
+``` r
 plot_it(df_r, "nrow")
+```
+
+![](iterate-over-rows_files/figure-gfm/row-benchmark-1.png)<!-- -->
+
+``` r
 #ggsave("row-benchmark.png")
 
 #df_c <- map_df(10 ^ (1:5), run_col_benchmark) %>% flevels()
 #write_csv(df_c, "col-benchmark.csv")
 df_c <- read_csv("col-benchmark.csv") %>% flevels()
+```
 
-#+ col-benchmark
+    ## Parsed with column specification:
+    ## cols(
+    ##   ncol = col_double(),
+    ##   method = col_character(),
+    ##   time = col_double()
+    ## )
+
+``` r
 plot_it(df_c, "ncol")
+```
+
+![](iterate-over-rows_files/figure-gfm/col-benchmark-1.png)<!-- -->
+
+``` r
 #ggsave("col-benchmark.png")
 
 ## used at first, but saw same dramatic gc artefacts as described here
@@ -176,3 +218,4 @@ plot_it(df_c, "ncol")
 #     mutate(method = as.character(method)) %>%
 #     add_column(nrow = nrow, .before = 1)
 # }
+```
