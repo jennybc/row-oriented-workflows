@@ -21,6 +21,7 @@ Not all are used in webinar
   * **Working with non-vectorized functions.** [`ex04_map-example`](ex04_map-example.md) Small example using `purrr::map()` to apply `nrow()` to list of data frames.
   * **Row-wise thinking vs. column-wise thinking.** [`ex05_attack-via-rows-or-columns`](ex05_attack-via-rows-or-columns.md) Data rectangling example. Both are possible, but I find building a tibble column-by-column is less aggravating than building rows, then row binding.
   * **Iterate over rows of a data frame.** [`iterate-over-rows`](iterate-over-rows.md) Empirical study of reshaping a data frame into this form: a list with one component per row. Revisiting a study originally done by Winston Chang. Run times for different number of [rows](row-benchmark.png) or [columns](col-benchmark.png).
+  * **Generate data from different distributions via `purrr::pmap()`.** [`ex06_runif-via-pmap`](ex06_runif-via-pmap.md) Use `purrr::pmap()` to generate U[min, max] data for various combinations of (n, min, max), stored as rows of a data frame.
   * **Split-apply-combine.** Nesting vs splitting.
     - Downside of `split()`: First-class grouping variable(s) --> character vector of names --> variable is a big drag. Integer-y numerics must be coerced back, factors must be recreated, with original levels. Transitting data through attributes is an anti-pattern.
     - Downside of `nest()`: When you inspect the list-column, you can't see values of grouping (key) variables. Grouping variables not necessarily/easily available for simple map (coolbutuseless's posts and PR).

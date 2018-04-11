@@ -137,6 +137,12 @@ my_runif <- function(n, min, max, ...) runif(n, min, max)
 set.seed(123)
 pmap(df_oops, my_runif)
 
+#' ## Add the generated data to the data frame as a list-column
+set.seed(123)
+(df_aug <- df %>%
+    mutate(data = pmap(., runif)))
+#View(df_aug)
+
 #' ## Review
 #'
 #' What have we done?
@@ -148,3 +154,4 @@ pmap(df_oops, my_runif)
 #'   * Wrote custom wrappers around `runif()` to deal with:
 #'     - df var names != `.f()` arg names
 #'     - df vars that aren't formal args of `.f()`
+#'   * Added generated data as a list-column
