@@ -25,3 +25,23 @@ Not all are used in webinar
   * **Generate data from different distributions via `purrr::pmap()`.** [`ex06_runif-via-pmap`](ex06_runif-via-pmap.md) Use `purrr::pmap()` to generate U[min, max] data for various combinations of (n, min, max), stored as rows of a data frame.
   * **Are you SURE you need to iterate over groups?** [`ex07_group-by-summarise`](ex07_group-by-summarise.md) Use `dplyr::group_by()` and `dplyr::summarise()` to compute group-wise summaries, without explicitly splitting up the data frame and re-combining the results. Use `list()` to package multivariate summaries into something `summarise()` can handle, creating a list-column.
   * **Group-and-nest.** [`ex08_nesting-is-good`](ex08_nesting-is-good.md) How to explicitly work on groups of rows via nesting (our recommendation) vs splitting.
+
+## More tips and links
+
+Big thanks to everyone who weighed in on the related [twitter thread](https://twitter.com/JennyBryan/status/980905136468910080). This was very helpful for planning content.
+
+45 minutes is not enough! A few notes about more special functions and patterns for row-driven work. Maybe we need to do a follow up ...
+
+`tibble::enframe()` and `deframe()` are handy for getting into and out of the data frame state.
+
+`map()` and `map2()` are useful for working with list-columns inside `mutate()`.
+
+`tibble::add_row()` handy for adding a single row at an arbitrary position in data frame.
+
+`imap()` handy for iterating over something and its names or integer indices at the same time.
+
+When you have multiple values for a single unit in one row (e.g. repeated measures), consider reshaping for easier computation. That turns a row-oriented problem into `group_by()` + `summarise()`, which is usually easier.
+
+`dplyr::case_when()` helps you get rid of hairy, nested `if () {...} else {...}` statements.
+
+Great resource on the "why?" of functional programming approaches (such as `map()`): <https://github.com/getify/Functional-Light-JS/blob/master/manuscript/ch1.md/>
