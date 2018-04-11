@@ -1,7 +1,7 @@
 Work on groups of rows via dplyr::group\_by() + summarise()
 ================
 Jenny Bryan
-2018-04-10
+2018-04-11
 
 What if you need to work on groups of rows? Such as the groups induced
 by the levels of a factor.
@@ -13,15 +13,7 @@ Instead, use `dplyr::group_by()`, followed by `dplyr::summarize()`, to
 compute group-wise summaries.
 
 ``` r
-library(dplyr)
-#> 
-#> Attaching package: 'dplyr'
-#> The following objects are masked from 'package:stats':
-#> 
-#>     filter, lag
-#> The following objects are masked from 'package:base':
-#> 
-#>     intersect, setdiff, setequal, union
+library(tidyverse)
 
 iris %>%
   group_by(Species) %>%
@@ -58,4 +50,35 @@ iris %>%
 #> 1 setosa     <dbl [3]>
 #> 2 versicolor <dbl [3]>
 #> 3 virginica  <dbl [3]>
+```
+
+Q from
+[@jcpsantiago](https://twitter.com/jcpsantiago/status/983997363298717696)
+via Twitter: How would you unnest so the final output is a data frame
+with a factor column `quantile` with levels “25%”, “50%”, and “75%”?
+
+A: I would `map()` `tibble::enframe()` on the new list column, to
+convert each entry from named list to a two-column data frame. Then use
+`tidyr::unnest()` to get rid of the list column and return to a simple
+data frame and, if you like, convert `quantile` into a factor.
+
+``` r
+iris %>%
+  group_by(Species) %>%
+  summarise(pl_qtile = list(quantile(Petal.Length, c(0.25, 0.5, 0.75)))) %>%
+  mutate(pl_qtile = map(pl_qtile, enframe, name = "quantile")) %>%
+  unnest() %>%
+  mutate(quantile = factor(quantile))
+#> # A tibble: 9 x 3
+#>   Species    quantile value
+#>   <fct>      <fct>    <dbl>
+#> 1 setosa     25%       1.40
+#> 2 setosa     50%       1.50
+#> 3 setosa     75%       1.58
+#> 4 versicolor 25%       4.00
+#> 5 versicolor 50%       4.35
+#> 6 versicolor 75%       4.60
+#> 7 virginica  25%       5.10
+#> 8 virginica  50%       5.55
+#> 9 virginica  75%       5.88
 ```
