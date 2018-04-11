@@ -21,11 +21,11 @@ library(tidyverse)
 #' ### Function to produce a fresh example data frame
 new_df <- function() {
   tribble(
-    ~ name, ~ age,
-    "Reed", 14L,
-    "Wesley", 12L,
-    "Eli", 12L,
-    "Toby", 1L
+      ~ name, ~ age,
+      "Reed",   14L,
+    "Wesley",   12L,
+       "Eli",   12L,
+      "Toby",    1L
   )
 }
 

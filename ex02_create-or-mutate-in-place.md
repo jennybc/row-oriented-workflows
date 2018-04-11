@@ -1,7 +1,7 @@
 Add or modify a variable
 ================
 Jenny Bryan
-2018-04-02
+2018-04-10
 
 ``` r
 library(tidyverse)
@@ -12,11 +12,11 @@ library(tidyverse)
 ``` r
 new_df <- function() {
   tribble(
-    ~ name, ~ age,
-    "Reed", 14L,
-    "Wesley", 12L,
-    "Eli", 12L,
-    "Toby", 1L
+      ~ name, ~ age,
+      "Reed",   14L,
+    "Wesley",   12L,
+       "Eli",   12L,
+      "Toby",    1L
   )
 }
 ```
