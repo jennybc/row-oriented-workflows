@@ -61,3 +61,17 @@ iris %>%
   unnest() %>%
   mutate(quantile = factor(quantile))
 
+#' If something like this comes up a lot in an analysis, you could package the
+#' key "moves" in a function, like so:
+enquantile <- function(x, ...) {
+  qtile <- enframe(quantile(x, ...), name = "quantile")
+  qtile$quantile <- factor(qtile$quantile)
+  list(qtile)
+}
+
+#' This makes repeated downstream usage more concise.
+iris %>%
+  group_by(Species) %>%
+  summarise(pl_qtile = enquantile(Petal.Length, c(0.25, 0.5, 0.75))) %>%
+  unnest()
+

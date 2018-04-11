@@ -82,3 +82,35 @@ iris %>%
 #> 8 virginica  50%       5.55
 #> 9 virginica  75%       5.88
 ```
+
+If something like this comes up a lot in an analysis, you could package
+the key “moves” in a function, like so:
+
+``` r
+enquantile <- function(x, ...) {
+  qtile <- enframe(quantile(x, ...), name = "quantile")
+  qtile$quantile <- factor(qtile$quantile)
+  list(qtile)
+}
+```
+
+This makes repeated downstream usage more concise.
+
+``` r
+iris %>%
+  group_by(Species) %>%
+  summarise(pl_qtile = enquantile(Petal.Length, c(0.25, 0.5, 0.75))) %>%
+  unnest()
+#> # A tibble: 9 x 3
+#>   Species    quantile value
+#>   <fct>      <fct>    <dbl>
+#> 1 setosa     25%       1.40
+#> 2 setosa     50%       1.50
+#> 3 setosa     75%       1.58
+#> 4 versicolor 25%       4.00
+#> 5 versicolor 50%       4.35
+#> 6 versicolor 75%       4.60
+#> 7 virginica  25%       5.10
+#> 8 virginica  50%       5.55
+#> 9 virginica  75%       5.88
+```
