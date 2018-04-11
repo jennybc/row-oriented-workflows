@@ -5,7 +5,8 @@ Materials for [RStudio webinar](https://www.rstudio.com/resources/webinars/):
 Thinking inside the box: you can do that inside a data frame?!  
 Jenny Bryan  
 Wednesday, April 11 at 1:00pm ET / 10:00am PT  
-[rstd.io/row-work](https://rstd.io/row-work) *shortlink to this repo*
+[rstd.io/row-work](https://rstd.io/row-work) *<-- shortlink to this repo*  
+Slides available [on SpeakerDeck](https://speakerdeck.com/jennybc/row-oriented-workflows-in-r-with-the-tidyverse)
 
 ## Abstract
 
