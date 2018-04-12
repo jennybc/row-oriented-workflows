@@ -1,7 +1,7 @@
 Why nesting is worth the awkwardness
 ================
 Jenny Bryan
-2018-04-10
+2018-04-12
 
 ``` r
 library(gapminder)
@@ -31,7 +31,7 @@ across an entire analysis.
 
 ``` r
 gap <- gap %>%
-  mutate(country = fct_reorder2(country, x = year, y = lifeExp))
+  mutate(country = fct_reorder2(country, .x = year, .y = lifeExp))
 ```
 
 ``` r
