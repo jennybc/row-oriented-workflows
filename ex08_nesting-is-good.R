@@ -34,7 +34,7 @@ ggplot(gap, aes(x = lifeExp, y = country)) +
 #' 2007, the last year in this dataset. Imagine you want this to persist across
 #' an entire analysis.
 gap <- gap %>%
-  mutate(country = fct_reorder2(country, x = year, y = lifeExp))
+  mutate(country = fct_reorder2(country, .x = year, .y = lifeExp))
 
 #+ principled-order
 ggplot(gap, aes(x = lifeExp, y = country)) +
