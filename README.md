@@ -1,6 +1,6 @@
 # Row-oriented workflows in R with the tidyverse
 
-Materials for [RStudio webinar](https://www.rstudio.com/resources/webinars/):
+Materials for [RStudio webinar](https://www.rstudio.com/resources/webinars/) *recording available at this link!*:
 
 Thinking inside the box: you can do that inside a data frame?!  
 Jenny Bryan  
