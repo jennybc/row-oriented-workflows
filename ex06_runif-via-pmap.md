@@ -1,7 +1,7 @@
 Generate data from different distributions via pmap()
 ================
 Jenny Bryan
-2018-04-10
+2018-05-08
 
 ## Uniform\[min, max\] via `runif()`
 
@@ -33,9 +33,9 @@ df
 #> # A tibble: 3 x 3
 #>       n   min   max
 #>   <int> <dbl> <dbl>
-#> 1     1    0.    1.
-#> 2     2   10.  100.
-#> 3     3  100. 1000.
+#> 1     1     0     1
+#> 2     2    10   100
+#> 3     3   100  1000
 ```
 
 Set seed to make this repeatedly random.
@@ -48,7 +48,7 @@ set.seed(123)
 #> # A tibble: 1 x 3
 #>       n   min   max
 #>   <int> <dbl> <dbl>
-#> 1     1    0.    1.
+#> 1     1     0     1
 runif(n = x$n, min = x$min, max = x$max)
 #> [1] 0.2875775
 
@@ -101,9 +101,9 @@ foofy
 #> # A tibble: 3 x 3
 #>   alpha  beta gamma
 #>   <int> <dbl> <dbl>
-#> 1     1    0.    1.
-#> 2     2   10.  100.
-#> 3     3  100. 1000.
+#> 1     1     0     1
+#> 2     2    10   100
+#> 3     3   100  1000
 ```
 
 A: Rename the variables on-the-fly, on the way in.
@@ -192,9 +192,9 @@ df_oops
 #> # A tibble: 3 x 4
 #>       n   min   max oops  
 #>   <int> <dbl> <dbl> <chr> 
-#> 1     1    0.    1. please
-#> 2     2   10.  100. ignore
-#> 3     3  100. 1000. me
+#> 1     1     0     1 please
+#> 2     2    10   100 ignore
+#> 3     3   100  1000 me
 ```
 
 This will not work\!
@@ -261,10 +261,67 @@ set.seed(123)
 #> # A tibble: 3 x 4
 #>       n   min   max data     
 #>   <int> <dbl> <dbl> <list>   
-#> 1     1    0.    1. <dbl [1]>
-#> 2     2   10.  100. <dbl [2]>
-#> 3     3  100. 1000. <dbl [3]>
+#> 1     1     0     1 <dbl [1]>
+#> 2     2    10   100 <dbl [2]>
+#> 3     3   100  1000 <dbl [3]>
 #View(df_aug)
+```
+
+What about computing within a data frame, in the presence of the
+complications discussed above? Use `list()` in the place of the `.`
+placeholder above to select the target variables and, if necessary, map
+variable names to argument names. *Thanks @hadley for [sharing this
+trick](https://community.rstudio.com/t/dplyr-alternatives-to-rowwise/8071/29).*
+
+How to address variable names \!= argument names:
+
+``` r
+foofy <- tibble(
+  alpha = 1:3,            ## was: n
+  beta = c(0, 10, 100),   ## was: min
+  gamma = c(1, 100, 1000) ## was: max
+)
+
+set.seed(123)
+foofy %>%
+  mutate(data = pmap(list(n = alpha, min = beta, max = gamma), runif))
+#> # A tibble: 3 x 4
+#>   alpha  beta gamma data     
+#>   <int> <dbl> <dbl> <list>   
+#> 1     1     0     1 <dbl [1]>
+#> 2     2    10   100 <dbl [2]>
+#> 3     3   100  1000 <dbl [3]>
+```
+
+How to address presence of ‘extra variables’ with either an inclusion or
+exclusion mentality
+
+``` r
+df_oops <- tibble(
+  n = 1:3,
+  min = c(0, 10, 100),
+  max = c(1, 100, 1000),
+  oops = c("please", "ignore", "me")
+)
+
+set.seed(123)
+df_oops %>%
+  mutate(data = pmap(list(n, min, max), runif))
+#> # A tibble: 3 x 5
+#>       n   min   max oops   data     
+#>   <int> <dbl> <dbl> <chr>  <list>   
+#> 1     1     0     1 please <dbl [1]>
+#> 2     2    10   100 ignore <dbl [2]>
+#> 3     3   100  1000 me     <dbl [3]>
+
+df_oops %>%
+  mutate(data = pmap(select(., -oops), runif))
+#> # A tibble: 3 x 5
+#>       n   min   max oops   data     
+#>   <int> <dbl> <dbl> <chr>  <list>   
+#> 1     1     0     1 please <dbl [1]>
+#> 2     2    10   100 ignore <dbl [2]>
+#> 3     3   100  1000 me     <dbl [3]>
 ```
 
 ## Review
@@ -278,4 +335,5 @@ What have we done?
   - Wrote custom wrappers around `runif()` to deal with:
       - df var names \!= `.f()` arg names
       - df vars that aren’t formal args of `.f()`
-  - Added generated data as a list-column
+  - Demonstrated all of the above when working inside a data frame and
+    adding generated data as a list-column

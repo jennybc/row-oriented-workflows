@@ -143,6 +143,39 @@ set.seed(123)
     mutate(data = pmap(., runif)))
 #View(df_aug)
 
+#' What about computing within a data frame, in the presence of the
+#' complications discussed above? Use `list()` in the place of the `.`
+#' placeholder above to select the target variables and, if necessary, map
+#' variable names to argument names. *Thanks @hadley for [sharing this
+#' trick](https://community.rstudio.com/t/dplyr-alternatives-to-rowwise/8071/29).*
+#'
+#' How to address variable names != argument names:
+foofy <- tibble(
+  alpha = 1:3,            ## was: n
+  beta = c(0, 10, 100),   ## was: min
+  gamma = c(1, 100, 1000) ## was: max
+)
+
+set.seed(123)
+foofy %>%
+  mutate(data = pmap(list(n = alpha, min = beta, max = gamma), runif))
+
+#' How to address presence of 'extra variables' with either an inclusion or
+#' exclusion mentality
+df_oops <- tibble(
+  n = 1:3,
+  min = c(0, 10, 100),
+  max = c(1, 100, 1000),
+  oops = c("please", "ignore", "me")
+)
+
+set.seed(123)
+df_oops %>%
+  mutate(data = pmap(list(n, min, max), runif))
+
+df_oops %>%
+  mutate(data = pmap(select(., -oops), runif))
+
 #' ## Review
 #'
 #' What have we done?
@@ -154,4 +187,5 @@ set.seed(123)
 #'   * Wrote custom wrappers around `runif()` to deal with:
 #'     - df var names != `.f()` arg names
 #'     - df vars that aren't formal args of `.f()`
-#'   * Added generated data as a list-column
+#'   * Demonstrated all of the above when working inside a data frame and adding
+#'   generated data as a list-column
