@@ -26,6 +26,7 @@ Not all are used in webinar
   * **Generate data from different distributions via `purrr::pmap()`.** [`ex06_runif-via-pmap`](ex06_runif-via-pmap.md) Use `purrr::pmap()` to generate U[min, max] data for various combinations of (n, min, max), stored as rows of a data frame.
   * **Are you SURE you need to iterate over groups?** [`ex07_group-by-summarise`](ex07_group-by-summarise.md) Use `dplyr::group_by()` and `dplyr::summarise()` to compute group-wise summaries, without explicitly splitting up the data frame and re-combining the results. Use `list()` to package multivariate summaries into something `summarise()` can handle, creating a list-column.
   * **Group-and-nest.** [`ex08_nesting-is-good`](ex08_nesting-is-good.md) How to explicitly work on groups of rows via nesting (our recommendation) vs splitting.
+  * **Row-wise mean or sum.** [`ex09_row-summaries`](ex09_row-summaries.md) How to do `rowSums()`-y and `rowMeans()`-y work inside a data frame.
 
 ## More tips and links
 
