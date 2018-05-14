@@ -50,10 +50,12 @@ df %>%
   mutate(t_avg = rowMeans(select(., -name)))
 
 #' Above I also demonstrate the use of `select(., SOME_EXPRESSION)` to express
-#' which variables should be forwarded to `.f` in `pmap().` These are just
-#' examples of the different ways to say "use `t1`, `t2`, and `t3`". This also
-#' comes up in [`ex06_runif-via-pmap`](ex06_runif-via-pmap.md). I'll continue to
-#' mix these in as we go.
+#' which variables should be computed on.  This comes up a lot in row-wise work
+#' with a data frame, because, almost by definition, your variables are of mixed
+#' type. These are just a few examples of the different ways to say "use `t1`,
+#' `t2`, and `t3`", so we don't try to sum or average `name`. I'll continue to
+#' mix these in as we go. They are equally useful when expressing which
+#' variables should be forwarded to `.f` inside `pmap_*().`
 #'
 #' ## How to use an arbitrary function inside `pmap()`
 #'
