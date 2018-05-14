@@ -77,7 +77,7 @@ df %>%
 #'
 #+ eval = FALSE
    sum(..., na.rm = FALSE)
-  mean(x, ...)
+  mean(x, trim = 0, na.rm = FALSE, ...)
 median(x, na.rm = FALSE, ...)
    var(x, y = NULL, na.rm = FALSE, use)
 
