@@ -25,6 +25,7 @@ options(tidyverse.quiet = TRUE)
 
 #' Good question! This also came up when I was originally casting about for
 #' genuine row-wise operations, but I never worked it up. I will do so now!
+#' First I set up my example.
 #'
 #+ body
 # ----
@@ -37,56 +38,110 @@ df <- tribble(
   "Carl",    7,   8,   9
 )
 
-#' Here is a one-liner, but my use of `purrr::lift_vd()` makes it a little
-#' astronaut-y..
+#' ## Use `rowSums()` and `rowMeans()` inside `dplyr::mutate()`
+#'
+#' One "tidy version" of `rowSums()` is to ... just stick `rowSums()` inside a
+#' tidyverse pipeline. You can use `rowSums()` and `rowMeans()` inside
+#' `mutate()`:
 df %>%
-  mutate(t_avg = pmap_dbl(select(., -name), lift_vd(mean)))
+  mutate(t_sum = rowSums(select_if(., is.numeric)))
 
-#' Interestingly, you don't need to change the domain for `sum()`:
 df %>%
-  mutate(t_sum = pmap_dbl(select(., -name), sum))
+  mutate(t_avg = rowMeans(select(., -name)))
 
-#' Why is that? Because of the difference in signature of `sum()` and `mean()`:
+#' Above I also demonstrate the use of `select(., SOME_EXPRESSION)` to express
+#' which variables should be forwarded to `.f` in `pmap().` These are just
+#' examples of the different ways to say "use `t1`, `t2`, and `t3`". This also
+#' comes up in [`ex06_runif-via-pmap`](ex06_runif-via-pmap.md). I'll continue to
+#' mix these in as we go.
+#'
+#' ## How to use an arbitrary function inside `pmap()`
+#'
+#' What if you need to apply `foo()` to rows and the universe has not provided a
+#' special-purpose `rowFoos()` function? Now you do need to use `pmap()` or a
+#' type-stable variant, with `foo()` playing the role of `.f`.
+#'
+#' This works especially well with `sum()`.
 
+df %>%
+  mutate(t_sum = pmap_dbl(list(t1, t2, t3), sum))
+
+df %>%
+  mutate(t_sum = pmap_dbl(select(., starts_with("t")), sum))
+
+#' But the original question was about means and standard deviations! Why is
+#' that any different? Look at the signature of `sum()` versus a few other
+#' numerical summaries:
+#'
 #+ eval = FALSE
-sum(..., na.rm = FALSE)
-mean(x, ...)
+   sum(..., na.rm = FALSE)
+  mean(x, ...)
+median(x, na.rm = FALSE, ...)
+   var(x, y = NULL, na.rm = FALSE, use)
 
-#' `sum()` has a more favorable signature for the way `purrr::pmap()` presents
-#' the data from each row.
+#' `sum()` is especially `pmap()`-friendly because it takes `...` as its primary
+#' argument. In contrast, `mean()` takes a vector `x` as primary argument, which
+#' makes it harder to just drop into `pmap()`. This is something you might never
+#' think about if you're used to using special-purpose helpers like
+#' `rowMeans()`.
 #'
-#' Note that above I'm also showing the use of `select(., SOME EXPRESSION)` to
-#' take control over which variables are passed along to `.f` of `pmap()`.
-#'
-#' ## Joining summaries back in
+#' purrr has a family of `lift_*()` functions that help you convert between
+#' these forms. Here I apply `purrr::lift_vd()` to `mean()`, so I can use it
+#' inside `pmap()`. The "vd" says I want to convert a function that takes a
+#' "**v**ector" into one that takes "**d**ots".
+df %>%
+  mutate(t_avg = pmap_dbl(list(t1, t2, t3), lift_vd(mean)))
+
+#' ## Strategies that use reshaping and joins
 #'
 #' Data frames simply aren't a convenient storage format if you have a frequent
-#' need to compute summaries, row-wise, on a subset of columns. This might
-#' suggest that your data is in the wrong shape. In any case, the more
-#' transparent ways to do this are also more verbose.
+#' need to compute summaries, row-wise, on a subset of columns. It is highly
+#' suggestive that your data is in the wrong shape, i.e. it's not tidy. Here we
+#' explore some approaches that rely on reshaping and/or joining. They are more
+#' transparent than using `lift_*()` with `pmap()` inside `mutate()` and,
+#' consequently, more verbose.
+#'
+#' They all rely on forming row-wise summaries, then joining back to the data.
+#'
+#' ### Gather, group, summarize
+(s <- df %>%
+    gather("time", "val", starts_with("t")) %>%
+    group_by(name) %>%
+    summarize(t_avg = mean(val), t_sum = sum(val)))
+df %>%
+  left_join(s)
 
-#' More verbose patterns for this involve using `group_by()` + `summarise()`
-#' and, therefore, obligate you to computing summaries separately and joining
-#' back in.
-(s1 <- df %>%
+#' ### Group then summarise, with explicit `c()`
+(s <- df %>%
     group_by(name) %>%
     summarise(t_avg = mean(c(t1, t2, t3))))
 df %>%
-  left_join(s1)
+  left_join(s)
 
-(s2 <- df %>%
-    gather("time", "val", starts_with("t")) %>%
-    group_by(name) %>%
-    summarize(t_avg = mean(val)))
+#' ### Nesting
+#'
+#' Let's revisit a pattern from
+#' [`ex08_nesting-is-good`](ex08_nesting-is-good.md). This is another way to
+#' "package" up the values of `t1`, `t2`, and `t3` in a way that make both
+#' `mean()` and `sum()` happy. *thanks @krlmlr*
+(s <- df %>%
+    gather("key", "value", -name) %>%
+    nest(-name) %>%
+    mutate(
+      sum = map(data, "value") %>% map_dbl(sum),
+      mean = map(data, "value") %>% map_dbl(mean)
+    ) %>%
+    select(-data))
 df %>%
-  left_join(s2)
+  left_join(s)
 
-(s3 <- df %>%
+#' ### Yet another way to use `rowMeans()`
+(s <- df %>%
     column_to_rownames("name") %>%
     rowMeans() %>%
     enframe())
 df %>%
-  left_join(s3)
+  left_join(s)
 
 #' ## Maybe you should use a matrix
 #'
