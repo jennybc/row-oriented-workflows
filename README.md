@@ -42,8 +42,6 @@ Big thanks to everyone who weighed in on the related [twitter thread](https://tw
 
 `imap()` handy for iterating over something and its names or integer indices at the same time.
 
-When you have multiple values for a single unit in one row (e.g. repeated measures), consider reshaping for easier computation. That turns a row-oriented problem into `group_by()` + `summarise()`, which is usually easier.
-
 `dplyr::case_when()` helps you get rid of hairy, nested `if () {...} else {...}` statements.
 
 Great resource on the "why?" of functional programming approaches (such as `map()`): <https://github.com/getify/Functional-Light-JS/blob/master/manuscript/ch1.md/>
