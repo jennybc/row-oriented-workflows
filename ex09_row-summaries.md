@@ -75,7 +75,8 @@ There are a few reasons:
 
   - You might want to take the median or standard deviation instead of a
     mean or a sum. You can’t assume that base R or an add-on package
-    offers a row-wise implementation of every function you might need.
+    offers a row-wise `data.frame` method for every function you might
+    need.
   - You might have several variables besides `name` that need to be
     retained, but that should not be forwarded to `rowSums()` or
     `rowMeans()`. A matrix-with-row-names grants you a reprieve for
@@ -84,7 +85,7 @@ There are a few reasons:
     a general solution.
   - Correctness. If you extract the numeric columns or the variables
     whose names start with `"t"`, compute `rowMeans()` on them, and then
-    column-binpd the result back to the data, you are responsible for
+    column-bind the result back to the data, you are responsible for
     making sure that the two objects are absolutely, positively
     row-aligned.
 

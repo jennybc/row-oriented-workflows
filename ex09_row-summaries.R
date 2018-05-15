@@ -68,14 +68,14 @@ df %>%
 #'
 #' * You might want to take the median or standard deviation instead of a mean
 #' or a sum. You can't assume that base R or an add-on package offers a row-wise
-#' implementation of every function you might need.
+#' `data.frame` method for every function you might need.
 #' * You might have several variables besides `name` that need to be retained,
 #' but that should not be forwarded to `rowSums()` or `rowMeans()`. A
 #' matrix-with-row-names grants you a reprieve for exactly one variable and that
 #' variable best not be integer, factor, date, or datetime. Because you must
 #' store it as character. It's not a general solution.
 #' * Correctness. If you extract the numeric columns or the variables whose
-#' names start with `"t"`, compute `rowMeans()` on them, and then column-binpd
+#' names start with `"t"`, compute `rowMeans()` on them, and then column-bind
 #' the result back to the data, you are responsible for making sure that the two
 #' objects are absolutely, positively row-aligned.
 #'
