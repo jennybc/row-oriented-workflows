@@ -31,7 +31,7 @@ df <- tribble(
 
 One “tidy version” of `rowSums()` is to … just stick `rowSums()` inside
 a tidyverse pipeline. You can use `rowSums()` and `rowMeans()` inside
-`mutate()`:
+`mutate()`, because they have a method for `data.frame`:
 
 ``` r
 df %>%
@@ -61,7 +61,35 @@ variables are of mixed type. These are just a few examples of the
 different ways to say “use `t1`, `t2`, and `t3`”, so we don’t try to sum
 or average `name`. I’ll continue to mix these in as we go. They are
 equally useful when expressing which variables should be forwarded to
-`.f` inside `pmap_*().`
+`.f` inside
+`pmap_*().`
+
+## Devil’s Advocate: can’t you just use `rowMeans()` and `rowSums()` alone?
+
+This is a great point [raised by Diogo
+Camacho](https://twitter.com/DiogoMCamacho/status/996178967647412224).
+If `rowSums()` and `rowMeans()` get the job done, why put yourself
+through the pain of using `pmap()`, especially inside `mutate()`?
+
+There are a few reasons:
+
+  - You might want to take the median or standard deviation instead of a
+    mean or a sum. You can’t assume that base R or an add-on package
+    offers a row-wise implementation of every function you might need.
+  - You might have several variables besides `name` that need to be
+    retained, but that should not be forwarded to `rowSums()` or
+    `rowMeans()`. A matrix-with-row-names grants you a reprieve for
+    exactly one variable and that variable best not be integer, factor,
+    date, or datetime. Because you must store it as character. It’s not
+    a general solution.
+  - Correctness. If you extract the numeric columns or the variables
+    whose names start with `"t"`, compute `rowMeans()` on them, and then
+    column-binpd the result back to the data, you are responsible for
+    making sure that the two objects are absolutely, positively
+    row-aligned.
+
+I think it’s important to have a general strategy for row-wise
+computation on a subset of the columns in a data frame.
 
 ## How to use an arbitrary function inside `pmap()`
 
