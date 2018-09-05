@@ -1,7 +1,7 @@
 Turn data frame into a list, one component per row
 ================
 Jenny Bryan, updating work of Winston Chang
-2018-04-10
+2018-09-05
 
 Update of <https://rpubs.com/wch/200398>.
 
@@ -13,18 +13,17 @@ Update of <https://rpubs.com/wch/200398>.
 
 ``` r
 library(scales)
-library(forcats)
 library(tidyverse)
 ```
 
-    ## ── Attaching packages ───────────────────────────────────────── tidyverse 1.2.1 ──
+    ## ── Attaching packages ──────────────────────────────────── tidyverse 1.2.1 ──
 
-    ## ✔ ggplot2 2.2.1          ✔ readr   1.1.1.9000
-    ## ✔ tibble  1.4.2          ✔ purrr   0.2.4.9000
-    ## ✔ tidyr   0.8.0          ✔ dplyr   0.7.4.9000
-    ## ✔ ggplot2 2.2.1          ✔ stringr 1.3.0
+    ## ✔ ggplot2 3.0.0     ✔ purrr   0.2.5
+    ## ✔ tibble  1.4.2     ✔ dplyr   0.7.6
+    ## ✔ tidyr   0.8.1     ✔ stringr 1.3.1
+    ## ✔ readr   1.2.0     ✔ forcats 0.3.0
 
-    ## ── Conflicts ──────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ─────────────────────────────────────── tidyverse_conflicts() ──
     ## ✖ readr::col_factor() masks scales::col_factor()
     ## ✖ purrr::discard()    masks scales::discard()
     ## ✖ dplyr::filter()     masks stats::filter()
@@ -114,7 +113,7 @@ run_col_benchmark <- function(ncol, times = 5) {
 
 ## force figs to present methods in order of time
 flevels <- function(df) {
-  mutate(df, method = fct_reorder(method, x = desc(time)))
+  mutate(df, method = fct_reorder(method, .x = desc(time)))
 }
 
 plot_it <- function(df, what = "nrow") {
