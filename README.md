@@ -12,7 +12,7 @@ Slides available [on SpeakerDeck](https://speakerdeck.com/jennybc/row-oriented-w
 
 The data frame is a crucial data structure in R and, especially, in the tidyverse. Working on a column or a variable is a very natural operation, which is great. But what about row-oriented work? That also comes up frequently and is more awkward. In this webinar I’ll work through concrete code examples, exploring patterns that arise in data analysis. We’ll discuss the general notion of "split-apply-combine", row-wise work in a data frame, splitting vs. nesting, and list-columns.
 
-## Code exampleshttps://www.rstudio.com/resources/webinars/
+## Code examples
 
 Beginner --> intermediate --> advanced  
 Not all are used in webinar
